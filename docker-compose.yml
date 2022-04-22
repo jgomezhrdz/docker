@@ -1,0 +1,57 @@
+networks:
+  default:
+    name: drupal_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+
+volumes:
+  #Drupal volumes
+  drupal_modules: 
+    name: drupal_modules
+  drupal_profiles: 
+    name: drupal_profiles
+  drupal_themes: 
+    name: drupal_themes
+  drupal_sites: 
+    name: drupal_sites
+  #MYSQL volumes
+  mysql_data:
+    name: mysql_data
+
+services:
+  #MYSQL container instance
+  drupal-database:
+    image: mysql:5.7
+    container_name: drupal_database
+    networks:
+      default:
+        ipv4_address: 192.168.0.2
+    expose:
+      - 3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+
+  #Drupal container
+  drupal:
+    image: drupal
+    container_name: drupal
+    networks:
+      default:
+        ipv4_address: 192.168.0.3
+    ports:
+      - 8080:80
+    volumes:
+      - drupal_modules:/var/www/html/modules
+      - drupal_profiles:/var/www/html/profiles
+      - drupal_themes:/var/www/html/themes
+      - drupal_sites:/var/www/html/sites
+    depends_on:
+      - drupal-database
