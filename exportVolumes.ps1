@@ -1,6 +1,6 @@
 $dir="${pwd}/backup"
 
-if(!Test-Path $dir){
+if (-Not $(Test-Path $dir)){
     New-Item $dir -ItemType Directory
 }
 
