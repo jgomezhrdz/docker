@@ -1,5 +1,9 @@
 $dir="${pwd}/backup"
 
+if(!Test-Path $dir){
+    New-Item $dir -ItemType Directory
+}
+
 #Export drupal volumes
 docker run --rm --volumes-from drupal -v ${dir}:/backup ubuntu bash -c "tar cvf /backup/drupalBackup.tar /var/www/html/modules /var/www/html/profiles /var/www/html/themes /var/www/html/sites"
 
